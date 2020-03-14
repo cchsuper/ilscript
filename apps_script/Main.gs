@@ -1,59 +1,24 @@
 // Original WR bolder script written by scatter 2018-11
+// Updated/Extended by 1UpsForLife 2020-01-09
 
-function onEdit(e) {  
+function ILScriptEntry(e) {  
   var sheet = SpreadsheetApp.getActiveSheet();
-  var lastRow = sheet.getLastRow();
-  var col = e.range.getColumn();
-  if (sheet.getSheetName() == 'IL Times'){
-    if (col != 1){
-      boldWR(col, sheet, lastRow);
+  var cell = e.range;
+  var sheetName = sheet.getSheetName();
+  console.log("Edit made on sheet "+sheetName+", row "+ cell.getRow() +" col "+ cell.getColumn());
+  if (sheetName == 'IL Times'){
+    if(cell.getColumn() > 1){
+      ILbolder(sheet, cell);
     }
   }
-}
-
-function boldWR(col, sheet, lastRow) {
-  var range = sheet.getRange(3, col, lastRow-2, 1);
-  var data = range.getDisplayValues();
-  var cellsToBold = [];
-  bestTime = null;
-  higherIsBetter = ([13,14,23,24,27,40,54,55,65,66,68,69,70,83,92,95,99,100,102,103,104].indexOf(col) != -1);
-
-  if (higherIsBetter) {
-    for (var i = 0; i < data.length; i++) {
-      if (isTimeString(data[i][0])) {
-        cellTime = timeStringToSeconds(data[i][0]);
-        if (bestTime == null || cellTime > bestTime) {
-          bestTime = cellTime;
-          cellsToBold = [i];
-        }
-        else if (cellTime == bestTime) {
-          cellsToBold.push(i);
-        }
-      }
+  else if(sheetName == 'Any% Best Splits'){
+    if(cell.getColumn() > 2){
+      AnypBolder(sheet, cell);
     }
   }
-  
-  else {
-    for (var i = 0; i < data.length; i++) {
-      if (isTimeString(data[i][0])) {
-        cellTime = timeStringToSeconds(data[i][0]);
-        if (bestTime == null || cellTime < bestTime) {
-          bestTime = cellTime;
-          cellsToBold = [i];
-        }
-        else if (cellTime == bestTime) {
-          cellsToBold.push(i);
-        }
-      }
-    }
-  }
-  
-  for (var i = 0; i < data.length; i++) {
-    if (cellsToBold.indexOf(i) != -1) {
-      range.getCell(i+1,1).setFontWeight('bold');
-    }
-    else {
-     range.getCell(i+1,1).setFontWeight('normal');
+  else if(sheetName == '120 Best Splits'){
+    if(cell.getColumn() > 1){
+      OneTwentyBolder(sheet, cell);
     }
   }
 }
