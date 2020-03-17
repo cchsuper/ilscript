@@ -34,15 +34,16 @@ function AnypBolder(sheet, cell) {
     }
     
     //check if there is a new wr
-    var newRecord = false;
-    for(var i=0; i<cellsToBold.length; i++){
-      if(levelRange.getCell(cellsToBold[i]+1,1).getTextStyle().isBold() === false){
-        newRecord = true;
-      }
-    }
-    if(newRecord === false){
-      return;
-    }
+    //TODO: this makes it not update the combined sob if a wr holder updates their wr, because their cell is already bolded.
+//    var newRecord = false;
+//    for(var i=0; i<cellsToBold.length; i++){
+//      if(levelRange.getCell(cellsToBold[i]+1,1).getTextStyle().isBold() === false){
+//        newRecord = true;
+//      }
+//    }
+//    if(newRecord === false){
+//      return;
+//    }
 
     //setting cell styles
     for (var i = 0; i < data.length; i++) {
