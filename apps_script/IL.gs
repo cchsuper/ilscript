@@ -1,5 +1,5 @@
 // Original WR bolder script written by scatter 2018-11
-// Updated/Extended by 1UpsForLife 2020-01-09, 2020-02-26
+// Updated/Extended by 1UpsForLife 2020-01-09, 2020-02-26, 2020-03-16
 
 function ILbolder(sheet, cell) {
   var col = cell.getColumn();
@@ -10,32 +10,37 @@ function ILbolder(sheet, cell) {
   bestTime = null;
   higherIsBetter = ([12,13,14,15,24,25,28,41,42,56,57,67,68,70,71,72,85,94,97,102,103,105,106,107].indexOf(col) != -1);
 
-  if (higherIsBetter) {
-    for (var i = 0; i < data.length; i++) {
-      if (isTimeString(data[i][0])) {
-        cellTime = timeStringToSeconds(data[i][0]);
-        if (bestTime == null || cellTime > bestTime) {
-          bestTime = cellTime;
-          cellsToBold = [i];
-        }
-        else if (cellTime == bestTime) {
-          cellsToBold.push(i);
+  for (var i = 0; i < data.length; i++) {
+    
+    if (isTimeString(data[i][0])) {
+      var formula = range.getCell(i+1,1).getFormula();
+      
+      if (formula.length > 0){
+        if(formula.substring(0,10) == "=HYPERLINK"){
+          range.getCell(i+1,1).setFontColor("#1155cc");
+          range.getCell(i+1,1).setFontLine("underline");
+          
+          cellTime = timeStringToSeconds(data[i][0]);
+          if ( (higherIsBetter==false) && (bestTime == null || cellTime < bestTime)) {
+            bestTime = cellTime;
+            cellsToBold = [i];
+          }
+          else if( (higherIsBetter==true) && (bestTime == null || cellTime > bestTime) ){
+            bestTime = cellTime;
+            cellsToBold = [i];
+          }
+          else if (cellTime == bestTime) {
+            cellsToBold.push(i);
+          }
         }
       }
+      else{
+        range.getCell(i+1,1).setFontColor("#000000");
+      }
+      
     }
-  }
-  else {
-    for (var i = 0; i < data.length; i++) {
-      if (isTimeString(data[i][0])) {
-        cellTime = timeStringToSeconds(data[i][0]);
-        if (bestTime == null || cellTime < bestTime) {
-          bestTime = cellTime;
-          cellsToBold = [i];
-        }
-        else if (cellTime == bestTime) {
-          cellsToBold.push(i);
-        }
-      }
+    else if(data[i][0] != ""){
+      range.getCell(i+1,1).setFontColor("#990000");
     }
   }
   

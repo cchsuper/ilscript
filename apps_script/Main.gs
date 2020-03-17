@@ -46,7 +46,7 @@ function timeStringToSeconds(input) {
 }
 
 function isTimeString(str) {
-  var regex = /^(\d+:)?(\d{2}:)?(\d+)(\.\d(\d)?)?$/;
+  var regex = /^(\d+:)?(\d{2}:)?(\d(\d)?)(\.\d(\d)?)$/;
   if (regex.exec(str) == null) {
     return false;
   }
