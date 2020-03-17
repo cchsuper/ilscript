@@ -56,34 +56,47 @@ for j,row in enumerate(data):
 
 # Assign Points
 for i,level in enumerate(data2):
-    #print("level:"+str(i))
     reverseSort = [10,11,12,13,22,23,26,39,40,54,55,65,
                    66,68,69,70,83,92,95,100,101,103,104,105]
     if i in reverseSort:
         sortedLevel = sorted(level,key=lambda x: x[1])
     else:
         sortedLevel = sorted(level,key=lambda x: x[1], reverse=True)
-
     pointsToAdd = 0
     tied=[]
+    tiedpoints=0
     prev =("placeholder",-1)
+
+    if i==9: print(sortedLevel)
     for j,entry in enumerate(sortedLevel):
         if entry[1] > 0:
 
             if entry[1] == prev[1]:
-                pass
+                if len(tied)==1:
+                    tiedpoints = pointsToAdd
             else:
-                for entry2 in tied:
-                    points[entry2[0]] += pointsToAdd
+                if len(tied)==1:
+                    points[tied[0][0]] += pointsToAdd
+                    #if i==8: print(tied[0][0]+": added "+str(pointsToAdd))
+                else:
+                    for entry2 in tied:
+                        points[entry2[0]] += tiedpoints
+                        #if i==8: print(entry2[0]+": added "+str(tiedpoints))
+                #if i==8: print(tied)
+                tiedpoints=0
                 tied = []
 
             tied.append(entry)
             pointsToAdd+=1
             prev = entry
 
-    if len(tied)>0:
+    if len(tied)==1:
+        points[tied[0][0]] += pointsToAdd
+        #if i==8: print(tied[0][0]+": added "+str(pointsToAdd))
+    if len(tied)>1:
         for entry in tied:
-            points[entry[0]] += pointsToAdd
+            points[entry[0]] += tiedpoints
+            #if i==8: print(entry[0]+": added "+str(tiedpoints))
 
 # Display Sorted Ranking
 ranking = sorted(points, key=lambda x: points[x], reverse=True)
