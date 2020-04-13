@@ -5,6 +5,9 @@
 import csv
 import re
 import os
+import sys
+
+debug = -1
 
 def getRaw(time: str) -> int:
     centiseconds = 0
@@ -26,12 +29,25 @@ def getRaw(time: str) -> int:
             else:
                 centiseconds += int(tmp2[1])
     return centiseconds
+
+path=""
+if len(sys.argv) > 1:
+    path = "./csv/"+str(sys.argv[1])
+    if os.path.isfile(path):
+        print("Using "+path)
+    else:
+        print("File not found:"+path)
+        quit()
+else:
+    print("Using latest file "+os.listdir("./csv/")[-1])
+    path = "./csv/"+os.listdir("./csv/")[-1]
+
 data = []
 players = []
 points={}
 data2=[]
 
-with open("./csv/"+os.listdir("./csv/")[-1]) as f:
+with open(path) as f:
     for i,row in enumerate(csv.reader(f)):
         if i<3:
             pass
@@ -54,6 +70,13 @@ for j,row in enumerate(data):
         levelList = data2[i]
         levelList.append((name, time))
 
+# Temporary (?) leaderboard print
+# place = 1
+# for t in sorted(data2[debug], key=lambda x: x[1]):
+#     if(t[1]>0):
+#         print(str(place)+". "+t[0]+": "+str(t[1]))
+#         place+=1
+
 # Assign Points
 for i,level in enumerate(data2):
     reverseSort = [10,11,12,13,22,23,26,39,40,54,55,65,
@@ -62,12 +85,12 @@ for i,level in enumerate(data2):
         sortedLevel = sorted(level,key=lambda x: x[1])
     else:
         sortedLevel = sorted(level,key=lambda x: x[1], reverse=True)
+    if i==debug: print(sortedLevel)
+
     pointsToAdd = 0
     tied=[]
     tiedpoints=0
     prev =("placeholder",-1)
-
-    if i==9: print(sortedLevel)
     for j,entry in enumerate(sortedLevel):
         if entry[1] > 0:
 
@@ -77,12 +100,12 @@ for i,level in enumerate(data2):
             else:
                 if len(tied)==1:
                     points[tied[0][0]] += pointsToAdd
-                    #if i==8: print(tied[0][0]+": added "+str(pointsToAdd))
+                    if i==debug: print(tied[0][0]+": added "+str(pointsToAdd))
                 else:
                     for entry2 in tied:
                         points[entry2[0]] += tiedpoints
-                        #if i==8: print(entry2[0]+": added "+str(tiedpoints))
-                #if i==8: print(tied)
+                        if i==debug: print(entry2[0]+": added "+str(tiedpoints))
+                if i==debug: print(tied)
                 tiedpoints=0
                 tied = []
 
@@ -92,13 +115,14 @@ for i,level in enumerate(data2):
 
     if len(tied)==1:
         points[tied[0][0]] += pointsToAdd
-        #if i==8: print(tied[0][0]+": added "+str(pointsToAdd))
+        if i==debug: print(tied[0][0]+": added "+str(pointsToAdd))
     if len(tied)>1:
         for entry in tied:
             points[entry[0]] += tiedpoints
-            #if i==8: print(entry[0]+": added "+str(tiedpoints))
+            if i==debug: print(entry[0]+": added "+str(tiedpoints))
 
 # Display Sorted Ranking
 ranking = sorted(points, key=lambda x: points[x], reverse=True)
-for i in ranking:
-    print(i+":"+str(points[i]))
+with open ("./out/"+path[6:-4]+".txt","w") as f:
+    for i in ranking:
+        f.write(i+":"+str(points[i])+"\n")
